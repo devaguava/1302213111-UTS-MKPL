@@ -1,31 +1,27 @@
 package lib;
 
 public class TaxFunction {	
+
+	private static final double taxRate = 0.05;
+    private static final int maxMonthsWorked = 12;
+    private static final int maxChildrenAllowed = 3;
+    private static final int marriedDeduction = 54000000 + 4500000 + (maxChildrenAllowed * 1500000);
+    private static final int singleDeduction = 54000000;
 	
-	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
-		
-		int tax = 0;
-		
-		if (numberOfMonthWorking > 12) {
-			System.err.println("More than 12 month working per year");
-		}
-		
-		if (numberOfChildren > 3) {
-			numberOfChildren = 3;
-		}
-		
-		if (isMarried) {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - (54000000 + 4500000 + (numberOfChildren * 1500000))));
-		}else {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - 54000000));
-		}
-		
-		if (tax < 0) {
-			return 0;
-		}else {
-			return tax;
-		}
-			 
-	}
-	
+	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int workMonths, int deductible, boolean isMarried, int childrenCount) {
+        if (workMonths > maxMonthsWorked) {
+            System.err.println("More than 12 months worked per year");
+            return 0;
+        }
+        
+        if (childrenCount > maxChildrenAllowed) {
+            System.err.println("Number of children cannot exceed 3");
+            return 0;
+        }
+
+        int deduction = isMarried ? marriedDeduction : singleDeduction;
+        int taxableIncome = (monthlySalary + otherMonthlyIncome) * workMonths - deductible - deduction;
+
+        return Math.max((int) Math.round(taxRate * taxableIncome), 0);
+    }
 }
